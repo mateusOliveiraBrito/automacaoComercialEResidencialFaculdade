@@ -1,5 +1,5 @@
 // GERENCIAMENTO: CAIXA D'ÁGUA
-#define umidade A0
+#define umidade 7
 #define IN1 2
 #define IN2 3
 
@@ -11,7 +11,7 @@
 void setup() {
   Serial.begin(9600);
   
-  configurarCaixaDAgua();
+  configurarGerenciamentoCaixaDAgua();
   configurarGerenciamentoVazamentoDeGas();
 }
 
@@ -22,6 +22,7 @@ void loop() {
 
 // CONFIGURAÇÕES
 void configurarGerenciamentoCaixaDAgua(){
+  pinMode(umidade, INPUT);
   pinMode(IN1, OUTPUT);
   pinMode(IN2, OUTPUT);
 }
@@ -35,9 +36,9 @@ void configurarGerenciamentoVazamentoDeGas(){
 // FUNCIONALIDADES
 // caixa d'água
 void gerenciarCaixaDAgua(){
-  int leitura = analogRead(umidade);
-
-  if(leitura > 550){
+  int leitura = digitalRead(umidade);
+  Serial.print(leitura);
+  if(leitura == LOW){
     ligarBomba();
   }else{
     desligarBomba();
