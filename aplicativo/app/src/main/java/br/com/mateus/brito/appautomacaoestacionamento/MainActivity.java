@@ -2,6 +2,7 @@ package br.com.mateus.brito.appautomacaoestacionamento;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -31,26 +32,17 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        IntentIntegrator integrator = new IntentIntegrator(MainActivity.this);
-        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
-        integrator.setPrompt("Escaneie o QR Code para entrar no estacionamento");
-        integrator.setCameraId(0);  // Use a câmera traseira
-        integrator.setBeepEnabled(true);
-        integrator.setBarcodeImageEnabled(true);
-        integrator.setOrientationLocked(true);
-        integrator.initiateScan();
-
         this.btnQrCode = (Button) findViewById(R.id.scanQrButton);
         this.btnQrCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 IntentIntegrator integrator = new IntentIntegrator(MainActivity.this);
                 integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
-                integrator.setPrompt("Scan a QR Code");
-                integrator.setCameraId(0);  // Use a câmera traseira
+                integrator.setPrompt("Escaneie o QR Code para entrar no estacionamento");
+                integrator.setCameraId(0);
                 integrator.setBeepEnabled(true);
                 integrator.setBarcodeImageEnabled(true);
-                integrator.setOrientationLocked(true);
+                integrator.setOrientationLocked(false);
                 integrator.initiateScan();
             }
         });
@@ -58,6 +50,16 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        LoadingAlert loadingAlert = new LoadingAlert(this);
+        loadingAlert.startAlertDialog();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                loadingAlert.closeAlertDialog();
+            }
+        }, 2500);
+
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() == null) {
